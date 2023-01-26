@@ -1,0 +1,38 @@
+version: '3'
+
+networks:
+  dns-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: '172.16.238.0/24'
+
+services:
+  dnscrypt-proxy:
+    image: 'easyselfhost/dnscrypt-proxy:latest'
+    container_name: 'dnscrypt-proxy'
+    restart: unless-stopped
+    networks:
+      dns-net:
+        ipv4_address: '172.16.238.10'
+    # volumes:
+    #   - /path/to/your/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml
+  
+  pihole:
+    image: 'pihole/pihole:latest'
+    container_name: 'pihole'
+    restart: unless-stopped
+    networks:
+      - dns-net
+    ports:
+      - '53:53/tcp'
+      - '53:53/udp'
+      - '8080:80/tcp'
+    environment:
+      WEBPASSWORD: 'your_password'
+      PIHOLE_DNS_: '172.16.238.10'
+    volumes:
+      - '/path/to/your/etc-pihole:/etc/pihole'
+      - '/path/to/your/etc-dnsmasq.d:/etc/dnsmasq.d'
+
+    
