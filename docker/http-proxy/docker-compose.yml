@@ -1,0 +1,23 @@
+version: '3'
+
+networks:
+  # create this network in command line using `docker network create proxy-net`
+  proxy-net:
+    name: proxy-net
+    external: true
+
+services:
+  nginx:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: 'nginx_proxy_manager'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      # you can remove port 81 after you have HTTPS setup to your Nginx Proxy Manager admin page
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ../../data/nginx/data:/data
+      - ../../data/nginx/letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy-net
