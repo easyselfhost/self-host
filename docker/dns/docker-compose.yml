@@ -16,7 +16,7 @@ services:
       dns-net:
         ipv4_address: '172.16.238.10'
     # volumes:
-    #   - /path/to/your/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml
+    #   - '${HOME}/docker-data/dns/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml'
   
   pihole:
     image: 'pihole/pihole:latest'
@@ -32,7 +32,7 @@ services:
       WEBPASSWORD: 'your_password'
       PIHOLE_DNS_: '172.16.238.10'
     volumes:
-      - '/path/to/your/etc-pihole:/etc/pihole'
-      - '/path/to/your/etc-dnsmasq.d:/etc/dnsmasq.d'
+      - '${HOME}/docker-data/dns/etc-pihole:/etc/pihole'
+      - '${HOME}/docker-data/dns/etc-dnsmasq.d:/etc/dnsmasq.d'
 
     

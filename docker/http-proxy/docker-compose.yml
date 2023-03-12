@@ -17,7 +17,7 @@ services:
       - '81:81'
       - '443:443'
     volumes:
-      - ../../data/nginx/data:/data
-      - ../../data/nginx/letsencrypt:/etc/letsencrypt
+      - '${HOME}/docker-data/nginx/data:/data'
+      - '${HOME}/docker-data/nginx/letsencrypt:/etc/letsencrypt'
     networks:
       - proxy-net
