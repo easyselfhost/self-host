@@ -1,0 +1,27 @@
+version: '3'
+
+networks:
+  # create this network in command line using `docker network create proxy-net`
+  proxy-net:
+    name: proxy-net
+    external: true
+
+services:
+  vaultwarden:
+    image: 'vaultwarden/server:latest'
+    container_name: 'vaultwarden'
+    restart: unless-stopped
+    environment:
+      - WEBSOCKET_ENABLED=true
+    networks:
+      - proxy-net
+    volumes:
+      - '${HOME}/docker-data/vaultwarden/data:/data'
+  
+  backpack:
+    image: 'easyselfhost/backpack:latest'
+    restart: unless-stopped
+    volumes:
+      - '${HOME}/docker-data/vaultwarden:/data/vaultwarden' 
+      # Check out config/backup in this repo for those files
+      - '${HOME}/self-host/config/backup:/config'

@@ -1,0 +1,31 @@
+{
+    "version": "0.1",
+    "backups": [
+        {
+            "directories": [
+                {
+                    "path": "/data",
+                    "file_rules": [
+                        {
+                            "regex": ".*sqlite3-shm",
+                            "command": "ignore"
+                        },
+                        {
+                            "regex": ".*sqlite3-wal",
+                            "command": "ignore"
+                        },
+                        {
+                            "regex": ".*sqlite3",
+                            "command": "sqlite"
+                        }
+                    ]
+                }
+            ],
+            "rclone_remote": "gcs",
+            "remote_path": "self-host-backup-bucket",
+            "schedule": {
+                "every": "1m"
+            }
+        }
+    ]
+}
