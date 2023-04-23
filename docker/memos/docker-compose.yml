@@ -1,0 +1,25 @@
+version: '3'
+
+networks:
+  # create this network in command line using `docker network create proxy-net`
+  proxy-net:
+    name: proxy-net
+    external: true
+
+services:
+  memos:
+    image: 'ghcr.io/usememos/memos:latest'
+    container_name: 'memos'
+    restart: unless-stopped
+    volumes: 
+     - ${HOME}/docker-data/memos:/var/opt/memos
+    networks: 
+     - proxy-net
+  
+  backpack:
+    image: 'easyselfhost/backpack:latest'
+    restart: unless-stopped
+    volumes:
+      - '${HOME}/docker-data/memeos:/data/memos:ro' 
+      # Check out config/backup in this repo for those files
+      - '${HOME}/self-host/config/backup:/config:ro'

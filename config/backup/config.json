@@ -17,6 +17,18 @@
                         {
                             "regex": ".*sqlite3",
                             "command": "sqlite"
+                        },
+                        {
+                            "regex": ".*db-shm",
+                            "command": "ignore"
+                        },
+                        {
+                            "regex": ".*db-wal",
+                            "command": "ignore"
+                        },
+                        {
+                            "regex": ".*db",
+                            "command": "sqlite"
                         }
                     ]
                 }
