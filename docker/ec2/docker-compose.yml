@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  nginx:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: 'nginx_proxy_manager'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      # you can remove port 81 after you have HTTPS setup to your Nginx Proxy Manager admin page
+      - '81:81'
+      - '443:443'
+    volumes:
+      - '/home/ubuntu/docker-data/nginx/data:/data'
+      - '/home/ubuntu/docker-data/nginx/letsencrypt:/etc/letsencrypt'
+
+  vaultwarden:
+    image: 'vaultwarden/server:latest'
+    container_name: 'vaultwarden'
+    restart: unless-stopped
+    environment:
+      - WEBSOCKET_ENABLED=true
+    volumes:
+      - '/home/ubuntu/docker-data/vaultwarden/data:/data'
