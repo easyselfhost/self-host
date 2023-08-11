@@ -2,6 +2,11 @@
 
 FROM --platform=${BUILDPLATFORM} golang:1.19-alpine as builder
 
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+
 RUN apk add build-base
 
 WORKDIR /src
@@ -14,7 +19,7 @@ RUN tar xzf /tmp/dnscrypt-proxy.tar.gz --strip 1
 
 WORKDIR /src/dnscrypt-proxy
 
-RUN CGO_ENABLED=0 go build -v -ldflags="-s -w" -mod vendor
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -v -ldflags="-s -w" -mod vendor
 
 WORKDIR /config
 
