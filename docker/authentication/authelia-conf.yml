@@ -48,6 +48,8 @@ password_policy:
 
 access_control:
   default_policy: "two_factor"
+
+session:
   name: "authelia_session"
   same_site: "lax"
   inactivity: "5m"
