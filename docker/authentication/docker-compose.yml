@@ -1,0 +1,59 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+configs:
+  authelia_config:
+    file: ./authelia-conf.yml
+
+services:
+  nginx:
+    image: "jc21/nginx-proxy-manager:latest"
+    container_name: "nginx"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    ports:
+      - 80:80
+      # you can remove port 81 after you have HTTPS setup to your Nginx Proxy Manager admin page
+      - 81:81
+      - 443:443
+    volumes:
+      - ${HOME}/docker-data/nginx/data:/data:rw
+      - ${HOME}/docker-data/nginx/letsencrypt:/etc/letsencrypt:rw
+      - ./authelia_snippets:/snippets:ro
+
+  authelia:
+    container_name: "authelia"
+    image: "authelia/authelia:latest"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    expose:
+      - 9091
+    configs:
+      - source: authelia_config
+        target: /config/configuration.yml
+    env_file:
+      - auth.env
+    volumes:
+      - ${HOME}/docker-data/auth/authelia/data:/data:rw
+      - ${HOME}/docker-data/auth/authelia/config:/config:rw
+
+  lldap:
+    container_name: "lldap"
+    image: "nitnelave/lldap:latest"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    expose:
+      - 3890 # LDAP service
+      - 17170 # Web service
+    env_file:
+      - auth.env
+    environment:
+      UID: 0
+    volumes:
+      - ${HOME}/docker-data/auth/lldap:/data:rw
