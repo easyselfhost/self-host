@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  caddy:
+    image: "caddy"
+    container_name: "caddy"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /root/caddy/Caddyfile:/etc/caddy/Caddyfile
+
+  memos:
+    image: "ghcr.io/usememos/memos"
+    container_name: "memos"
+    volumes:
+      - /root/memos:/var/opt/memos
+
+  vaultwarden:
+    image: "vaultwarden/server"
+    container_name: "vaultwarden"
+    volumes:
+      - /root/vaultwarden:/data

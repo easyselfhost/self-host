@@ -1,0 +1,8 @@
+# Please swap the domain name to yours
+memos.goselfhost.com {
+  reverse_proxy memos:5230
+}
+
+vault.goselfhost.com {
+  reverse_proxy vaultwarden:80
+}
