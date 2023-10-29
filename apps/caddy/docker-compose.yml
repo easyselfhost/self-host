@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  caddy:
+
+configs:
+  caddyfile:
+    file: ./Caddyfile
+
+services:
+  caddy:
+    # This image is a modified caddy image that supports several DNS providers
+    # using xcaddy build: https://github.com/easyselfhost/images/blob/main/caddy/Dockerfile.
+    #
+    # This is the official documented way to support DNS providers like cloudflare:
+    # https://caddyserver.com/docs/modules/dns.providers.cloudflare
+    image: "ghcr.io/easyselfhost/caddy:latest"
+    container_name: "caddy"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    volumes:
+      - caddy:/data
+    environment:
+      - DNS_PROVIDER_TOKEN
