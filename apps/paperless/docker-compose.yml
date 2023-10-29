@@ -54,5 +54,6 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: db
       PAPERLESS_DBPASS: paperless
+      PAPERLESS_URL: https://paperless.home.easyselfhost.com
       # Please generate another secret key
       PAPERLESS_SECRET_KEY: bua!k8rb.akjd@934t
