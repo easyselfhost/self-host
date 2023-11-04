@@ -1,0 +1,57 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  data:
+  media:
+  pgdata:
+  redisdata:
+
+services:
+  broker:
+    image: docker.io/library/redis:7
+    container_name: "paperless-redis"
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+  db:
+    image: docker.io/library/postgres:15
+    container_name: "paperless-postgres"
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: "paperless"
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+    healthcheck:
+      test:
+        ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - default
+      - proxy-net
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBPASS: paperless
+      PAPERLESS_URL: https://paperless.home.easyselfhost.com
+      # Please generate another secret key
+      PAPERLESS_SECRET_KEY: bua!k8rb.akjd@934t

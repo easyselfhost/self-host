@@ -1,0 +1,12 @@
+# Replace this with your domain name.
+*.home.easyselfhost.com {
+    # You don't need this if you host on the public Internet (e.g. with a public IP)
+    tls {
+        dns cloudflare {env.DNS_PROVIDER_TOKEN}
+    }
+
+    @paperless host paperless.home.easyselfhost.com
+    handle @paperless {
+        reverse_proxy paperless:8000
+    }
+}
