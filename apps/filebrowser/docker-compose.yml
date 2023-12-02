@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  root: # Stores root directories
+  database: # Stores filebrowser database
+  jellyfin-media:
+    external:
+      name: jellyfin_jellyfin-media
+
+services:
+  filebrowser:
+    image: "filebrowser/filebrowser:latest"
+    container_name: "filebrowser"
+    restart: unless-stopped
+    expose:
+      - 80
+    networks:
+      - proxy-net
+    volumes:
+      # Configuraion
+      - ./filebrowser.json:/.filebrowser.json:ro
+      # Database
+      - database:/database:rw
+      # Root directory
+      - root:/srv:rw
+
+      # # Other directories you want to mount
+      # # For example
+      # # Your server home directory
+      # - $HOME:/srv/users/esh/home:rw
+      # # Volumes from other apps (must declared in the volumes section)
+      # - jellyfin-media:/srv/users/esh/media:rw
