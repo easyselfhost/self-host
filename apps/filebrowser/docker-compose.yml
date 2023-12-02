@@ -7,9 +7,6 @@ networks:
 volumes:
   root: # Stores root directories
   database: # Stores filebrowser database
-  jellyfin-media:
-    external:
-      name: jellyfin_jellyfin-media
 
 services:
   filebrowser:
