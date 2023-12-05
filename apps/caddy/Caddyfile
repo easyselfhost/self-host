@@ -9,4 +9,9 @@
     handle @paperless {
         reverse_proxy paperless:8000
     }
+
+    @filebrowser host files.home.easyselfhost.com
+    handle @filebrowser {
+        reverse_proxy filebrowser:80
+    }
 }
