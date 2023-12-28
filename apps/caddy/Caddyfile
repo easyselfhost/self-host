@@ -14,4 +14,9 @@
     handle @filebrowser {
         reverse_proxy filebrowser:80
     }
+
+    @jellyfin host media.home.easyselfhost.com
+    handle @jellyfin {
+        reverse_proxy jellyfin:8096
+    }
 }
