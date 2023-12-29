@@ -7,9 +7,10 @@ networks:
 volumes:
   jellyfin-media:
     # # You can also mount a NFS volume from your other servers (e.g. NAS)
-    # type: "nfs"
-    # o: "addr=10.40.0.199,nolock,soft,rw"
-    # device: ":/my/media"
+    # driver_opts:
+    #   type: "nfs"
+    #   o: "addr=10.40.0.199,nolock,soft,rw"
+    #   device: ":/my/media"
   jellyfin-config:
   jellyfin-cache:
 
