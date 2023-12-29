@@ -19,4 +19,9 @@
     handle @jellyfin {
         reverse_proxy jellyfin:8096
     }
+
+    @pyload host pyload.home.easyselfhost.com
+    handle @pyload {
+        reverse_proxy pyload:8000
+    }
 }
