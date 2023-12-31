@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  jellyfin-media:
+    name: jellyfin_jellyfin-media
+    external: true
+
+services:
+  pyload:
+    image: "lscr.io/linuxserver/pyload-ng:latest"
+    container_name: "pyload"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    environment:
+      PUID: 0
+      PGID: 0
+    expose:
+      - 8000
+    volumes:
+      - jellyfin-media:/downloads
