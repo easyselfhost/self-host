@@ -1,0 +1,27 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  work:
+  conf:
+
+services:
+  adguard:
+    image: "adguard/adguardhome:latest"
+    container_name: "adguard"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    ports:
+      # Most of the time, your localhost:53 is occupied
+      # by system services like systemd-resolved,
+      # so I suggest just exposing your DNS service on
+      # your server IP.
+      - "192.168.1.101:53:53/tcp"
+      - "192.168.1.101:53:53/udp"
+    volumes:
+      - work:/opt/adguardhome/work
+      - conf:/opt/adguardhome/conf

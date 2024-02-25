@@ -24,4 +24,9 @@
     handle @pyload {
         reverse_proxy pyload:8000
     }
+
+    @adguard host adguard.home.easyselfhost.com
+    handle @adguard {
+        reverse_proxy adguard:3000
+    }
 }
