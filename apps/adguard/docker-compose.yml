@@ -16,8 +16,12 @@ services:
     networks:
       - proxy-net
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
+      # Most of the time, your localhost:53 is occupied
+      # by system services like systemd-resolved,
+      # so I suggest just exposing your DNS service on
+      # your server IP.
+      - "192.168.1.101:53:53/tcp"
+      - "192.168.1.101:53:53/udp"
     volumes:
       - work:/opt/adguardhome/work
       - conf:/opt/adguardhome/conf
