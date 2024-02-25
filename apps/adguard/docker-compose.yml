@@ -1,0 +1,23 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  work:
+  conf:
+
+services:
+  adguard:
+    image: "adguard/adguardhome:latest"
+    container_name: "adguard"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    volumes:
+      - work:/opt/adguardhome/work
+      - conf:/opt/adguardhome/conf
