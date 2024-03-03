@@ -29,4 +29,9 @@
     handle @adguard {
         reverse_proxy adguard:3000
     }
+
+    @kopia host kopia.home.easyselfhost.com
+    handle @kopia {
+        reverse_proxy kopia:80
+    }
 }
