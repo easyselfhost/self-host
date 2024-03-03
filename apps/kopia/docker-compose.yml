@@ -9,8 +9,8 @@ volumes:
 
   # volumes to backup
   vaultwarden-data:
-    external:
-      name: vaultwarden_data
+    name: vaultwarden_data
+    external: true
 
 services:
   kopia:
