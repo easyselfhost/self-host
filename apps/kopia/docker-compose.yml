@@ -33,7 +33,13 @@ services:
       - --server-password=my_server_password
       - --password=my_password
     volumes:
-      - config:/app/config
+      - config:/app/config:rw
+
+      # Script
+      - ./docker.sh:/docker.sh:ro
+
+      # Docker UNIX socket
+      - /var/run/docker.sock:/var/run/docker.sock:rw
 
       # volumes and paths to backup
       - vaultwarden-data:/backup/vaultwarden:ro
