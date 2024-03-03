@@ -35,6 +35,9 @@ services:
     volumes:
       - config:/app/config:rw
 
+      # For backup restore export
+      - /home/esh/backup-export:/export
+
       # Script
       - ./docker.sh:/docker.sh:ro
 
