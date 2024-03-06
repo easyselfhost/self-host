@@ -1,0 +1,49 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  config:
+
+  # volumes to backup
+  vaultwarden-data:
+    name: vaultwarden_data
+    external: true
+
+services:
+  kopia:
+    image: "kopia/kopia:latest"
+    container_name: "kopia"
+    restart: unless-stopped
+    expose:
+      - 80
+    networks:
+      - proxy-net
+    command:
+      - server
+      - start
+      - --disable-csrf-token-checks
+      - --insecure
+      - --address=0.0.0.0:80
+      - --enable-actions
+      - --server-username=kopia
+      # provide your own password and secret here
+      - --server-password=my_server_password
+      - --password=my_password
+    volumes:
+      - config:/app/config:rw
+
+      # For backup restore export
+      - /home/esh/backup-export:/export
+
+      # Script
+      - ./docker.sh:/docker.sh:ro
+
+      # Docker UNIX socket
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+
+      # volumes and paths to backup
+      - vaultwarden-data:/backup/vaultwarden:ro
+      # /path/to/backup:/backup/backup_name:ro

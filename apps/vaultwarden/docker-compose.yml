@@ -1,0 +1,19 @@
+version: "3"
+
+networks:
+  proxy-net:
+    name: proxy-net
+    external: true
+
+volumes:
+  data:
+
+services:
+  vaultwarden:
+    image: "vaultwarden/server:latest"
+    container_name: "vaultwarden"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    volumes:
+      - data:/data
