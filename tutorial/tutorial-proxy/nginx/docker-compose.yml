@@ -1,0 +1,70 @@
+version: "3"
+
+volumes:
+  vaultwarden-data:
+  memos-data:
+  certs:
+
+services:
+  vaultwarden:
+    image: "vaultwarden/server"
+    container_name: "vaultwarden"
+    restart: unless-stopped
+    volumes:
+      - vaultwarden-data:/data
+
+  memos:
+    image: "neosmemo/memos:stable"
+    container_name: "memos"
+    restart: unless-stopped
+    volumes:
+      - memos-data:/var/opt/memos
+
+  nginx:
+    image: "nginx"
+    container_name: "nginx"
+    restart: unless-stopped
+    depends_on:
+      certbot:
+        condition: service_healthy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - certs:/etc/certificates
+
+  certbot:
+    image: "certbot/dns-cloudflare"
+    container_name: "certbot"
+    entrypoint: >
+      /bin/sh -c '
+      while true; do
+        certbot certonly \
+          --dns-cloudflare \
+          --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
+          --dns-cloudflare-propagation-seconds 20 \
+          -d "*.goselfhost.com" \
+          -d goselfhost.com \
+          --non-interactive \
+          --agree-tos \
+          -m esh@easyselfhost.com \
+          --logs-dir /var/log/letsencrypt \
+          --config-dir /etc/letsencrypt \
+          --work-dir /var/lib/letsencrypt;
+        echo "Sleeping for 60 days...";
+        sleep 60d;
+      done;'
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          "test -f /etc/letsencrypt/live/goselfhost.com/fullchain.pem",
+        ]
+      interval: 20s
+      timeout: 5s
+    volumes:
+      - ./cloudflare.ini:/etc/letsencrypt/cloudflare.ini
+      - certs:/etc/letsencrypt

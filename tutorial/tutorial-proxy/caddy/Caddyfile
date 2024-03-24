@@ -1,0 +1,15 @@
+*.goselfhost.com {
+    tls {
+        dns cloudflare {env.DNS_PROVIDER_TOKEN}
+    }
+
+    @vaultwarden host vault.goselfhost.com
+    handle @vaultwarden {
+        reverse_proxy vaultwarden:80
+    }
+
+    @memos host memos.goselfhost.com
+    handle @memos {
+        reverse_proxy memos:5230
+    }
+}
