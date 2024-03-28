@@ -1,0 +1,34 @@
+version: "3"
+
+volumes:
+  vaultwarden-data:
+  memos-data:
+  caddy-data:
+
+services:
+  caddy:
+    image: "ghcr.io/easyselfhost/caddy"
+    container_name: "caddy"
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - caddy-data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    environment:
+      - DNS_PROVIDER_TOKEN=YOUR_TOKEN
+
+  vaultwarden:
+    image: "vaultwarden/server"
+    container_name: "vaultwarden"
+    restart: unless-stopped
+    volumes:
+      - vaultwarden-data:/data
+
+  memos:
+    image: "neosmemo/memos:stable"
+    container_name: "memos"
+    restart: unless-stopped
+    volumes:
+      - memos-data:/var/opt/memos

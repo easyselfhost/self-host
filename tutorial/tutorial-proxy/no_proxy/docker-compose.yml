@@ -1,0 +1,24 @@
+version: "3"
+
+volumes:
+  vaultwarden-data:
+  memos-data:
+
+services:
+  vaultwarden:
+    image: "vaultwarden/server"
+    container_name: "vaultwarden"
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - vaultwarden-data:/data
+
+  memos:
+    image: "neosmemo/memos:stable"
+    container_name: "memos"
+    restart: unless-stopped
+    ports:
+      - 8081:5230
+    volumes:
+      - memos-data:/var/opt/memos

@@ -1,0 +1,54 @@
+version: "3"
+
+volumes:
+  vaultwarden-data:
+  memos-data:
+  acme:
+
+services:
+  traefik:
+    image: "traefik"
+    container_name: "traefik"
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.myresolver.acme.email=esh@easyselfhost.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CF_DNS_API_TOKEN=YOUR_TOKEN
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/letsencrypt:rw
+
+  vaultwarden:
+    image: "vaultwarden/server"
+    container_name: "vaultwarden"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vaultwarden.rule=Host(`vault.goselfhost.com`)"
+      - "traefik.http.routers.vaultwarden.entrypoints=websecure"
+      - "traefik.http.routers.vaultwarden.tls.certresolver=myresolver"
+    volumes:
+      - vaultwarden-data:/data
+
+  memos:
+    image: "neosmemo/memos:stable"
+    container_name: "memos"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.memos.rule=Host(`memos.goselfhost.com`)"
+      - "traefik.http.routers.memos.entrypoints=websecure"
+      - "traefik.http.routers.memos.tls.certresolver=myresolver"
+    volumes:
+      - memos-data:/var/opt/memos
