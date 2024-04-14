@@ -8,22 +8,29 @@
 
 name: immich
 
+networks:
+  proxy-net:
+    external: true
+
 services:
   immich-server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: ['start.sh', 'immich']
+    networks:
+      - default
+      - proxy-net
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
-    ports:
-      - 2283:3001
+    expose:
+      - 3001
     depends_on:
       - redis
       - database
-    restart: always
+    restart: unless-stopped
 
   immich-microservices:
     container_name: immich_microservices
@@ -40,7 +47,7 @@ services:
     depends_on:
       - redis
       - database
-    restart: always
+    restart: unless-stopped
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -54,12 +61,12 @@ services:
       - model-cache:/cache
     env_file:
       - .env
-    restart: always
+    restart: unless-stopped
 
   redis:
     container_name: immich_redis
     image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:51d6c56749a4243096327e3fb964a48ed92254357108449cb6e23999c37773c5
-    restart: always
+    restart: unless-stopped
 
   database:
     container_name: immich_postgres
@@ -70,8 +77,9 @@ services:
       POSTGRES_DB: ${DB_DATABASE_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    restart: always
+    restart: unless-stopped
 
 volumes:
   pgdata:
   model-cache:
+  upload:
