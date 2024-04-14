@@ -34,4 +34,9 @@
     handle @kopia {
         reverse_proxy kopia:80
     }
+
+    @immich host immich.home.easyselfhost.com
+    handle @immich {
+        reverse_proxy immich-server:3001
+    }
 }
