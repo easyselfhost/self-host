@@ -1,0 +1,85 @@
+#
+# WARNING: Make sure to use the docker-compose.yml of the current release:
+#
+# https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+#
+# The compose file on main may not be compatible with the latest release.
+#
+
+name: immich
+
+networks:
+  proxy-net:
+    external: true
+
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: ['start.sh', 'immich']
+    networks:
+      - default
+      - proxy-net
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - .env
+    expose:
+      - 3001
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+
+  immich-microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    # extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/hardware-transcoding
+    #   file: hwaccel.transcoding.yml
+    #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
+    command: ['start.sh', 'microservices']
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
+    # Example tag: ${IMMICH_VERSION:-release}-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    # extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
+    #   file: hwaccel.ml.yml
+    #   service: cpu # set to one of [armnn, cuda, openvino, openvino-wsl] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    volumes:
+      - model-cache:/cache
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  redis:
+    container_name: immich_redis
+    image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:51d6c56749a4243096327e3fb964a48ed92254357108449cb6e23999c37773c5
+    restart: unless-stopped
+
+  database:
+    container_name: immich_postgres
+    image: registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  model-cache:
+  upload:
