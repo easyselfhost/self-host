@@ -1,0 +1,34 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  ollama:
+  open-webui:
+
+services:
+  ollama:
+    container_name: "ollama"
+    image: "ollama/ollama:latest"
+    networks:
+      - proxy-net
+    expose:
+      - 11434
+    volumes:
+      - ollama:/root/.ollama
+    restart: unless-stopped
+
+  open-webui:
+    container_name: "open-webui"
+    image: "ghcr.io/open-webui/open-webui:main"
+    networks:
+      - proxy-net
+    expose:
+      - 8080
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    restart: unless-stopped
