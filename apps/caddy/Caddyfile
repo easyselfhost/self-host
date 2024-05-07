@@ -39,4 +39,15 @@
     handle @immich {
         reverse_proxy immich-server:3001
     }
+
+    @chat host chat.home.easyselfhost.com
+    handle @chat {
+        reverse_proxy open-webui:8080
+    }
+
+    # optional. uncomment it if you have other ollama clients
+    # @ollama host ollama.home.easyselfhost.com
+    # handle @ollama {
+    #     reverse_proxy ollama:11434
+    # }
 }
