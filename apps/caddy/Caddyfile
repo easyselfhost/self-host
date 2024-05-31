@@ -50,4 +50,9 @@
     # handle @ollama {
     #     reverse_proxy ollama:11434
     # }
+
+    @webtop host webtop.home.easyselfhost.com
+    handle @webtop {
+        reverse_proxy webtop:3000
+    }
 }
