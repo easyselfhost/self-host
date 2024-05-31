@@ -6,8 +6,6 @@ networks:
 
 volumes:
   home:
-  immich_upload:
-    external: true
 
 services:
   webtop:
