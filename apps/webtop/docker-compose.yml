@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  home:
+
+services:
+  webtop:
+    # image: lscr.io/linuxserver/webtop:latest
+    image: lscr.io/linuxserver/webtop:ubuntu-kde
+    container_name: webtop
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - TITLE=Webtop #optional
+      # - PASSWORD=strong_password #optional
+    networks:
+      - proxy-net
+    expose:
+      - 3000
+    volumes:
+      - home:/config
+      # - /var/run/docker.sock:/var/run/docker.sock #optional
+    shm_size: "1gb" #optional
+    restart: unless-stopped
