@@ -55,4 +55,29 @@
     handle @webtop {
         reverse_proxy webtop:3000
     }
+
+    @bookstack host bookstack.home.easyselfhost.com
+    handle @bookstack {
+        reverse_proxy bookstack:80
+    }
+
+    @outline host outline.home.easyselfhost.com
+    handle @outline {
+        reverse_proxy outline:3000
+    }
+
+    @affine host affine.home.easyselfhost.com
+    handle @affine {
+        reverse_proxy affine:3010
+    }
+
+    @docmost host docmost.home.easyselfhost.com
+    handle @docmost {
+        reverse_proxy docmost:3000
+    }
+
+    @trilium host trilium.home.easyselfhost.com
+    handle @trilium {
+        reverse_proxy trilium:8080
+    }
 }
