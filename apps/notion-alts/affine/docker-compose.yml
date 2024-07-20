@@ -47,7 +47,7 @@ services:
       # - MAILER_SECURE=true
       # - MAILER_PORT=465
       # - MAILER_USER=YOUR_EMAIL_ADDRESS
-      # - MAILER_SENDER=esh@easyselfhost.com
+      # - MAILER_SENDER=YOUR_EMAIL_ADDRESS
       # - MAILER_PASSWORD=app-password
 
   redis:

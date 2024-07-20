@@ -7,7 +7,6 @@ networks:
 volumes:
   storage-data:
   database-data:
-  authelia-data:
 
 services:
   outline:
