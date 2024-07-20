@@ -1,0 +1,21 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  trilium-data:
+
+services:
+  trilium:
+    image: zadam/trilium
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    environment:
+      - TRILIUM_DATA_DIR=/home/node/trilium-data
+    expose:
+      - 8080
+    volumes:
+      - trilium-data:/home/node/trilium-data

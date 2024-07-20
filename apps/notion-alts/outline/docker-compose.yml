@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  storage-data:
+  database-data:
+
+services:
+  outline:
+    image: docker.getoutline.com/outlinewiki/outline:latest
+    env_file: ./outline.env
+    networks:
+      - default
+      - proxy-net
+    expose:
+      - 3000
+    volumes:
+      - storage-data:/var/lib/outline/data
+    depends_on:
+      - postgres
+      - redis
+
+  redis:
+    image: redis
+    env_file: ./outline.env
+
+  postgres:
+    image: postgres
+    env_file: ./outline.env
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "outline"
+      POSTGRES_PASSWORD: "strong_password"
+      POSTGRES_DB: "outline"
