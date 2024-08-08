@@ -7,7 +7,20 @@
 
     @paperless host paperless.home.easyselfhost.com
     handle @paperless {
+        # Uncomment below for authentication using Authentik
+        # reverse_proxy /outpost.goauthentik.io/* authentik-server:9000
+
+        # forward_auth authentik-server:9000 {
+        #     uri /outpost.goauthentik.io/auth/caddy
+        #     copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
+        #     trusted_proxies private_ranges
+        # }
+
+
         reverse_proxy paperless:8000
+        # reverse_proxy paperless:8000 {
+        #     header_up Remote-User {http.request.header.X-Authentik-Username}
+        # }
     }
 
     @filebrowser host files.home.easyselfhost.com
@@ -79,5 +92,10 @@
     @trilium host trilium.home.easyselfhost.com
     handle @trilium {
         reverse_proxy trilium:8080
+    }
+
+    @authentik host authentik.home.easyselfhost.com
+    handle @authentik {
+        reverse_proxy authentik-server:9000
     }
 }
