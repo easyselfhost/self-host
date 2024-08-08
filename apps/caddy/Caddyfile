@@ -56,6 +56,14 @@
         reverse_proxy immich-server:3001
     }
 
+    @stirling-pdf host pdf.home.easyselfhost.com
+    handle @stirling-pdf {
+        # Uncomment below to enable authentication
+        # import authenticate
+
+        reverse_proxy stirling-pdf:8080
+    }
+
     @chat host chat.home.easyselfhost.com
     handle @chat {
         reverse_proxy open-webui:8080

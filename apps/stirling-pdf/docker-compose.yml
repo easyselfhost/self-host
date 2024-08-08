@@ -1,0 +1,14 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+services:
+  stirling-pdf:
+    image: "frooodle/s-pdf"
+    networks:
+      - proxy-net
+    expose:
+      - 8080
+    container_name: "stirling-pdf"
