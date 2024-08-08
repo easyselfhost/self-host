@@ -20,10 +20,10 @@
         # import authenticate
 
 
-        # reverse_proxy paperless:8000
-        reverse_proxy paperless:8000 {
-            header_up Remote-User {http.request.header.X-Authentik-Username}
-        }
+        reverse_proxy paperless:8000
+        # reverse_proxy paperless:8000 {
+        #     header_up Remote-User {http.request.header.X-Authentik-Username}
+        # }
     }
 
     @filebrowser host files.home.easyselfhost.com
