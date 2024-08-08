@@ -1,3 +1,12 @@
+(authenticate) {
+    reverse_proxy /outpost.goauthentik.io/* authentik-server:9000
+
+    forward_auth authentik-server:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
+        trusted_proxies private_ranges
+    }
+}
 # Replace this with your domain name.
 *.home.easyselfhost.com {
     # You don't need this if you host on the public Internet (e.g. with a public IP)
@@ -8,19 +17,13 @@
     @paperless host paperless.home.easyselfhost.com
     handle @paperless {
         # Uncomment below for authentication using Authentik
-        # reverse_proxy /outpost.goauthentik.io/* authentik-server:9000
-
-        # forward_auth authentik-server:9000 {
-        #     uri /outpost.goauthentik.io/auth/caddy
-        #     copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
-        #     trusted_proxies private_ranges
-        # }
+        import authenticate
 
 
-        reverse_proxy paperless:8000
-        # reverse_proxy paperless:8000 {
-        #     header_up Remote-User {http.request.header.X-Authentik-Username}
-        # }
+        # reverse_proxy paperless:8000
+        reverse_proxy paperless:8000 {
+            header_up Remote-User {http.request.header.X-Authentik-Username}
+        }
     }
 
     @filebrowser host files.home.easyselfhost.com
