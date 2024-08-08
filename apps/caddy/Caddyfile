@@ -17,7 +17,7 @@
     @paperless host paperless.home.easyselfhost.com
     handle @paperless {
         # Uncomment below for authentication using Authentik
-        import authenticate
+        # import authenticate
 
 
         # reverse_proxy paperless:8000
