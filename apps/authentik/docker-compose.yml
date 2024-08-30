@@ -15,12 +15,6 @@ services:
   postgresql:
     image: postgres:16
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      start_period: 20s
-      interval: 30s
-      retries: 5
-      timeout: 5s
     volumes:
       - database:/var/lib/postgresql/data
     environment:
@@ -31,17 +25,11 @@ services:
   redis:
     image: redis
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      start_period: 20s
-      interval: 30s
-      retries: 5
-      timeout: 3s
     volumes:
       - redis:/data
 
   authentik-server:
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.6.2}
+    image: ghcr.io/goauthentik/server:2024.6.2
     restart: unless-stopped
     command: server
     environment:
@@ -50,14 +38,13 @@ services:
       AUTHENTIK_POSTGRESQL__USER: authentik
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
     networks:
       - proxy-net
       - default
     volumes:
       - media:/media
       - custom-templates:/templates
-    env_file:
-      - .env
     expose:
       - 9000
     depends_on:
@@ -65,7 +52,7 @@ services:
       - redis
 
   worker:
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.6.2}
+    image: ghcr.io/goauthentik/server:2024.6.2
     restart: unless-stopped
     command: worker
     environment:
@@ -74,12 +61,11 @@ services:
       AUTHENTIK_POSTGRESQL__USER: authentik
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
     volumes:
       - media:/media
       - certs:/certs
       - custom-templates:/templates
-    env_file:
-      - .env
     depends_on:
       - postgresql
       - redis
