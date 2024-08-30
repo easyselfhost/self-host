@@ -42,11 +42,11 @@ services:
     networks:
       - proxy-net
       - default
+    expose:
+      - 9000
     volumes:
       - media:/media
       - custom-templates:/templates
-    expose:
-      - 9000
     depends_on:
       - postgresql
       - redis
