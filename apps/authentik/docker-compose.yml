@@ -1,0 +1,71 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  database:
+  redis:
+  media:
+  certs:
+  custom-templates:
+
+services:
+  postgresql:
+    image: postgres:16
+    restart: unless-stopped
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_USER: authentik
+      POSTGRES_DB: authentik
+
+  redis:
+    image: redis
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+  authentik-server:
+    image: ghcr.io/goauthentik/server:2024.6.2
+    restart: unless-stopped
+    command: server
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+    networks:
+      - proxy-net
+      - default
+    expose:
+      - 9000
+    volumes:
+      - media:/media
+      - custom-templates:/templates
+    depends_on:
+      - postgresql
+      - redis
+
+  worker:
+    image: ghcr.io/goauthentik/server:2024.6.2
+    restart: unless-stopped
+    command: worker
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+    volumes:
+      - media:/media
+      - certs:/certs
+      - custom-templates:/templates
+    depends_on:
+      - postgresql
+      - redis
