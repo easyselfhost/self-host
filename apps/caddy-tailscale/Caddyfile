@@ -109,4 +109,9 @@
     handle @authentik {
         reverse_proxy authentik-server:9000
     }
+
+    @tsdns host tsdns.home.easyselfhost.com
+    handle @tsdns {
+        reverse_proxy localhost:3000
+    }
 }
