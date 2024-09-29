@@ -1,0 +1,117 @@
+(authenticate) {
+    reverse_proxy /outpost.goauthentik.io/* authentik-server:9000
+
+    forward_auth authentik-server:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
+        trusted_proxies private_ranges
+    }
+}
+# Replace this with your domain name.
+*.home.easyselfhost.com {
+    # You don't need this if you host on the public Internet (e.g. with a public IP)
+    tls {
+        dns cloudflare {env.DNS_PROVIDER_TOKEN}
+    }
+
+    @paperless host paperless.home.easyselfhost.com
+    handle @paperless {
+        # Uncomment below for authentication using Authentik
+        # import authenticate
+
+
+        reverse_proxy paperless:8000
+        # reverse_proxy paperless:8000 {
+        #     header_up Remote-User {http.request.header.X-Authentik-Username}
+        # }
+    }
+
+    @filebrowser host files.home.easyselfhost.com
+    handle @filebrowser {
+        reverse_proxy filebrowser:80
+    }
+
+    @jellyfin host media.home.easyselfhost.com
+    handle @jellyfin {
+        reverse_proxy jellyfin:8096
+    }
+
+    @pyload host pyload.home.easyselfhost.com
+    handle @pyload {
+        reverse_proxy pyload:8000
+    }
+
+    @adguard host adguard.home.easyselfhost.com
+    handle @adguard {
+        reverse_proxy adguard:3000
+    }
+
+    @kopia host kopia.home.easyselfhost.com
+    handle @kopia {
+        reverse_proxy kopia:80
+    }
+
+    @immich host immich.home.easyselfhost.com
+    handle @immich {
+        reverse_proxy immich-server:3001
+    }
+
+    @stirling-pdf host pdf.home.easyselfhost.com
+    handle @stirling-pdf {
+        # Uncomment below to enable authentication
+        # import authenticate
+
+        reverse_proxy stirling-pdf:8080
+    }
+
+    @chat host chat.home.easyselfhost.com
+    handle @chat {
+        reverse_proxy open-webui:8080
+    }
+
+    # optional. uncomment it if you have other ollama clients
+    # @ollama host ollama.home.easyselfhost.com
+    # handle @ollama {
+    #     reverse_proxy ollama:11434
+    # }
+
+    @webtop host webtop.home.easyselfhost.com
+    handle @webtop {
+        reverse_proxy webtop:3000
+    }
+
+    @bookstack host bookstack.home.easyselfhost.com
+    handle @bookstack {
+        reverse_proxy bookstack:80
+    }
+
+    @outline host outline.home.easyselfhost.com
+    handle @outline {
+        reverse_proxy outline:3000
+    }
+
+    @affine host affine.home.easyselfhost.com
+    handle @affine {
+        reverse_proxy affine:3010
+    }
+
+    @docmost host docmost.home.easyselfhost.com
+    handle @docmost {
+        reverse_proxy docmost:3000
+    }
+
+    @trilium host trilium.home.easyselfhost.com
+    handle @trilium {
+        reverse_proxy trilium:8080
+    }
+
+    @authentik host authentik.home.easyselfhost.com
+    handle @authentik {
+        reverse_proxy authentik-server:9000
+    }
+
+    @tsdns host tsdns.home.easyselfhost.com
+    handle @tsdns {
+        reverse_proxy localhost:3000
+    }
+}

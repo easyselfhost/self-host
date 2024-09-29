@@ -1,0 +1,62 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  caddy:
+  tailscale:
+  adguard:
+
+configs:
+  caddyfile:
+    file: ./Caddyfile
+
+services:
+  caddy-tailscale:
+    # This image is a modified caddy image that supports several DNS providers
+    # using xcaddy build: https://github.com/easyselfhost/images/blob/main/caddy/Dockerfile.
+    #
+    # This is the official documented way to support DNS providers like cloudflare:
+    # https://caddyserver.com/docs/modules/dns.providers.cloudflare
+    image: "ghcr.io/easyselfhost/caddy:latest"
+    container_name: "caddy"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    volumes:
+      - caddy:/data
+    environment:
+      - DNS_PROVIDER_TOKEN
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    environment:
+      - TS_AUTHKEY=${TS_AUTH_KEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    network_mode: "service:caddy-tailscale"
+    volumes:
+      - tailscale:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+
+  adguard-tailscale:
+    image: "adguard/adguardhome:latest"
+    container_name: "adguard-tailscale"
+    restart: unless-stopped
+    network_mode: "service:caddy-tailscale"
+    volumes:
+      - adguard:/opt/adguardhome
