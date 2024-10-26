@@ -7,11 +7,6 @@ networks:
 volumes:
   caddy:
   tailscale:
-  adguard:
-
-configs:
-  caddyfile:
-    file: ./Caddyfile
 
 services:
   caddy-tailscale:
@@ -29,11 +24,9 @@ services:
       - "80:80"
       - "443:443"
       - "443:443/udp"
-    configs:
-      - source: caddyfile
-        target: /etc/caddy/Caddyfile
     volumes:
       - caddy:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
     environment:
       - DNS_PROVIDER_TOKEN
 
