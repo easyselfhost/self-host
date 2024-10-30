@@ -1,0 +1,3 @@
+headscale.cloud.easyselfhost.com {
+    reverse_proxy headscale:8080
+}

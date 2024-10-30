@@ -1,0 +1,32 @@
+version: "3"
+
+# This configuration is for running headscale
+# on a server with a public IP address (e.g. a VPS)
+#
+# For connecting your home server to the Headscale network,
+# please checkout the headscale-client/ directory.
+
+volumes:
+  caddy:
+  headscale:
+
+services:
+  caddy:
+    image: "caddy"
+    container_name: "caddy"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+
+  headscale:
+    image: "headscale/headscale"
+    container_name: "headscale"
+    command: serve
+    restart: unless-stopped
+    volumes:
+      - headscale:/var/lib/headscale
+      - ./config.yaml:/etc/headscale/config.yaml

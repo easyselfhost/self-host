@@ -1,0 +1,54 @@
+version: "3"
+
+# This configuration is for running the Tailscale client
+# to connect you home server to your Headscale network.
+#
+# For running Headscale server, please checkout the
+# headscale-server/ directory.
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  caddy:
+  tailscale:
+
+services:
+  caddy-tailscale:
+    # This image is a modified caddy image that supports several DNS providers
+    # using xcaddy build: https://github.com/easyselfhost/images/blob/main/caddy/Dockerfile.
+    #
+    # This is the official documented way to support DNS providers like cloudflare:
+    # https://caddyserver.com/docs/modules/dns.providers.cloudflare
+    image: "ghcr.io/easyselfhost/caddy:latest"
+    container_name: "caddy"
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    environment:
+      - DNS_PROVIDER_TOKEN
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    environment:
+      - TS_AUTHKEY=${TS_AUTH_KEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_EXTRA_ARGS=--login-server=https://headscale.cloud.easyselfhost.com
+    network_mode: "service:caddy-tailscale"
+    volumes:
+      - tailscale:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
