@@ -299,14 +299,19 @@ dns:
   # Extra DNS records
   # so far only A-records are supported (on the tailscale side)
   # See https://github.com/juanfont/headscale/blob/main/docs/dns-records.md#Limitations
-  extra_records: []
-  #   - name: "grafana.myvpn.example.com"
-  #     type: "A"
-  #     value: "100.64.0.3"
-  #
-  #   # you can also put it in one line
-  #   - { name: "prometheus.myvpn.example.com", type: "A", value: "100.64.0.3" }
-
+  extra_records:
+    # Add your home server sub-domains here to resolve to the Headscale IP
+    # - { name: "immich.home.easyselfhost.com", type: "A", value: "100.64.0.2" }
+    # - {
+    #     name: "paperless.home.easyselfhost.com",
+    #     type: "A",
+    #     value: "100.64.0.2",
+    #   }
+    # - {
+    #     name: "authentik.home.easyselfhost.com",
+    #     type: "A",
+    #     value: "100.64.0.2",
+    #   }
 
 # Unix socket used for the CLI to connect without authentication
 # Note: for production you will want to set this to something like:

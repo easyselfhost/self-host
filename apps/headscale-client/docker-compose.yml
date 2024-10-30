@@ -1,5 +1,11 @@
 version: "3"
 
+# This configuration is for running the Tailscale client
+# to connect you home server to your Headscale network.
+#
+# For running Headscale server, please checkout the
+# headscale-server/ directory.
+
 networks:
   proxy-net:
     external: true
