@@ -28,10 +28,20 @@ services:
       NEXTAUTH_SECRET: super_random_string
       NEXTAUTH_URL: https://hoarder.home.easyselfhost.com
 
+      # If use local Ollma for AI features:
       OLLAMA_BASE_URL: https://ollama.home.easyselfhost.com
       INFERENCE_TEXT_MODEL: qwen2.5:7b
       INFERENCE_IMAGE_MODEL: llava:7b
       INFERENCE_CONTEXT_LENGTH: 8192 # default is 2096
+
+      # # If use OpenAI API for AI features:
+      # OPENAI_API_KEY: your_api_key
+
+      # # If use OpenAI compatible API for AI features:
+      # OPENAI_BASE_URL: https://api_endpoint # e.g. https://generativelanguage.googleapis.com/v1beta/openai/
+      # OPENAI_API_KEY: your_api_key
+      # INFERENCE_TEXT_MODEL: model_name # e.g. gemini-1.5-flash
+      # INFERENCE_IMAGE_MODEL: model_name # e.g. gemini-1.5-flash
 
       CRAWLER_VIDEO_DOWNLOAD: true # Enable video download feature
       CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE: -1 # Disable video download limit, default is 50 MB
