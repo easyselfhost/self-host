@@ -109,4 +109,9 @@
     handle @authentik {
         reverse_proxy authentik-server:9000
     }
+
+    @hoarder host hoarder.home.easyselfhost.com
+    handle @hoarder {
+        reverse_proxy hoarder:3000
+    }
 }

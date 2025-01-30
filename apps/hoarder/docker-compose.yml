@@ -1,0 +1,72 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  data:
+  meilisearch:
+
+services:
+  hoarder:
+    image: ghcr.io/hoarder-app/hoarder:release
+    restart: unless-stopped
+    volumes:
+      - data:/data
+    # port is 3000
+    networks:
+      - proxy-net
+      - default
+    environment:
+      DATA_DIR: /data
+
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+
+      MEILI_MASTER_KEY: another_random_string
+      NEXTAUTH_SECRET: super_random_string
+      NEXTAUTH_URL: https://hoarder.home.easyselfhost.com
+
+      # If use local Ollma for AI features:
+      OLLAMA_BASE_URL: https://ollama.home.easyselfhost.com
+      INFERENCE_TEXT_MODEL: qwen2.5:7b
+      INFERENCE_IMAGE_MODEL: llava:7b
+      INFERENCE_CONTEXT_LENGTH: 8192 # default is 2096
+
+      # # If use OpenAI API for AI features:
+      # OPENAI_API_KEY: your_api_key
+
+      # # If use OpenAI compatible API for AI features:
+      # OPENAI_BASE_URL: https://api_endpoint # e.g. https://generativelanguage.googleapis.com/v1beta/openai/
+      # OPENAI_API_KEY: your_api_key
+      # INFERENCE_TEXT_MODEL: model_name # e.g. gemini-1.5-flash
+      # INFERENCE_IMAGE_MODEL: model_name # e.g. gemini-1.5-flash
+
+      CRAWLER_VIDEO_DOWNLOAD: true # Enable video download feature
+      CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE: -1 # Disable video download limit, default is 50 MB
+
+  chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:123
+    restart: unless-stopped
+    # Limit the memory the browser uses
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.11.1
+    restart: unless-stopped
+    volumes:
+      - meilisearch:/meili_data
+    environment:
+      MEILI_MASTER_KEY: another_random_string
+      MEILI_NO_ANALYTICS: "true"
