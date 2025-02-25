@@ -1,0 +1,15 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+services:
+  drawio:
+    image: jgraph/drawio
+    container_name: drawio
+    restart: unless-stopped
+    expose:
+      - 8080
+    networks:
+      - proxy-net

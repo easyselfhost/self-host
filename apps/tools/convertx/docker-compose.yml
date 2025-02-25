@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  convertx:
+
+services:
+  convertx:
+    image: ghcr.io/c4illin/convertx:latest
+    container_name: convertx
+    restart: unless-stopped
+    expose:
+      - 3000
+    networks:
+      - proxy-net
+    volumes:
+      - convertx:/app/data
+    environment:
+      # Remove the following line if you want to enable signing in
+      ALLOW_UNAUTHENTICATED: true
+      # Uncomment the following line if you want to enalbe user sign up
+      # ACCOUNT_REGISTRATION: true
