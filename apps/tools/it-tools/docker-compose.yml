@@ -1,0 +1,15 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+services:
+  it-tools:
+    image: corentinth/it-tools:latest
+    container_name: "it-tools"
+    restart: unless-stopped
+    expose:
+      - 80
+    networks:
+      - proxy-net

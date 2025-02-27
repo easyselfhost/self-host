@@ -1,0 +1,9 @@
+# Generate your users.yaml file using the command
+# docker run amir20/dozzle generate --name Admin --email admin@example.com --password YOUR_PASSWORD admin
+users:
+  admin:
+    email: admin@example.com
+    name: Admin
+    # The password field is not the actual password. It's the encrypted version of your password in the command
+    password: $2a$11$yG0U0yKxDIRI2qON7l0A0.FrnIWtK60XRwzj1Glh5gQ1yX9VHko5O
+    filter: ""
