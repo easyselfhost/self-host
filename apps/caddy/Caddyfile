@@ -26,11 +26,6 @@
 		# }
 	}
 
-	@filebrowser host files.home.easyselfhost.com
-	handle @filebrowser {
-		reverse_proxy filebrowser:80
-	}
-
 	@jellyfin host media.home.easyselfhost.com
 	handle @jellyfin {
 		reverse_proxy jellyfin:8096
@@ -156,5 +151,15 @@
 	@dozzle host dozzle.ezsh.app
 	handle @dozzle {
 		reverse_proxy dozzle:8080
+	}
+
+	@audiobookshelf host audiobook.ezsh.app
+	handle @audiobookshelf {
+		reverse_proxy audiobookshelf:80
+	}
+
+	@filebrowser host files.ezsh.app
+	handle @filebrowser {
+		reverse_proxy filebrowser:80
 	}
 }
