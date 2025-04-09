@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  audiobooks:
+  podcasts:
+  config:
+  metadata:
+
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    networks:
+      - proxy-net
+    volumes:
+      - audiobooks:/audiobooks
+      - podcasts:/podcasts
+      - config:/config
+      - metadata:/metadata
+    environment:
+      TZ: America/New_York
