@@ -1,0 +1,23 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  snapp:
+    image: uraniadev/snapp
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    volumes:
+      - snapp:/data
+    environment:
+      DATABASE_PROVIDER: sqlite         
+      DATABASE_URL: "file:/data/db.sqlite"  
+      TOKEN_SECRET: ${SNAPP_SECRET}
+      ORIGIN: ${SNAPP_URL}
+      PUBLIC_URL: ${SNAPP_URL}
+      ADMIN_USERNAME: ${SNAPP_USER}
+      ADMIN_PASSWORD: ${SNAPP_PASSWORD} 
+
+volumes:
+  snapp:

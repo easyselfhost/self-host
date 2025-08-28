@@ -1,0 +1,39 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  shlink:
+    image: shlinkio/shlink:stable
+    networks:
+      - proxy-net
+      - default
+    environment:
+      - DEFAULT_DOMAIN=${SHLINK_DOMAIN}
+      - IS_HTTPS_ENABLED=false
+      - INITIAL_API_KEY=${SHLINK_API_KEY}
+      - DB_DRIVER=postgres
+      - DB_NAME=shlink
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db
+
+  shlink-web:
+    image: shlinkio/shlink-web-client
+    networks:
+      - proxy-net
+    environment:
+      - SHLINK_SERVER_API_KEY=${SHLINK_API_KEY}
+      - SHLINK_SERVER_URL=${SHLINK_URL}
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=shlink
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:

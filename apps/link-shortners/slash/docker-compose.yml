@@ -1,0 +1,16 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  slash:
+    image: yourselfhosted/slash:latest
+    restart: unless-stopped
+    container_name: slash
+    networks:
+      - proxy-net
+    volumes:
+      - slash:/var/opt/slash
+
+volumes:
+  slash:

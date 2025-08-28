@@ -1,0 +1,38 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  yourls:
+    image: yourls
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    networks:
+      - proxy-net
+      - default
+    environment:
+      YOURLS_DB_PASS: $DB_PASSWORD
+      YOURLS_SITE: $SITE_URL
+      YOURLS_PASS: $YOURLS_PASSWORD
+      YOURLS_USER: $YOURLS_USER
+      YOURLS_DB_HOST: mariadb
+
+  mariadb:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: $DB_PASSWORD
+      MARIADB_DATABASE: yourls
+    ## Uncomment below for less memory usage
+    # command: >
+    #   --innodb-buffer-pool-size=64M
+    #   --max-connections=50
+    #   --innodb-log-file-size=32M
+    #   --innodb-log-buffer-size=8M
+    #   --key-buffer-size=16M
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
