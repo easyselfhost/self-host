@@ -162,4 +162,25 @@
 	handle @filebrowser {
 		reverse_proxy filebrowser:80
 	}
+
+	@docs host docs.ezsh.app
+	handle @docs {
+		reverse_proxy docmost:3000
+	}
+
+	@shlink host shlink.ezsh.app
+	handle @shlink {
+		reverse_proxy shlink-web:8080
+	}
+}
+
+ezsh.link {
+	tls {
+		dns cloudflare {env.DNS_PROVIDER_TOKEN}
+	}
+
+	reverse_proxy shlink:8080
+	# reverse_proxy yourls:8080
+	# reverse_proxy snapp:3000
+	# reverse_proxy slash:5231
 }
