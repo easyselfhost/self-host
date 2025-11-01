@@ -172,6 +172,11 @@
 	handle @shlink {
 		reverse_proxy shlink-web:8080
 	}
+
+	@uptime host uptime.ezsh.app
+	handle @uptime {
+		reverse_proxy uptime-kuma:3001
+	}
 }
 
 ezsh.link {
