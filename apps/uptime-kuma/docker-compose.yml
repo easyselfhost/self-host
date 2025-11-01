@@ -1,0 +1,17 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:2 # use 2-slim for smaller image but no chromium
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - data:/app/data
+    networks:
+      - proxy-net
+
+volumes:
+  data:
+
+networks:
+  proxy-net:
+    external: true
+
